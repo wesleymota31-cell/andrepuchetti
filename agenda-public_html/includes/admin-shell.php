@@ -11,6 +11,7 @@ function admin_icon(string $name): string
         'clients' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 19c0-2.2-1.8-4-4-4H8c-2.2 0-4 1.8-4 4"/><path d="M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M20 18c0-1.8-1.2-3.3-2.8-3.8"/><path d="M16 3.4a4 4 0 0 1 0 7.2"/></svg>',
         'reports' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/><path d="M20 16V6"/></svg>',
         'services' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M9 17h6"/><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>',
+        'radar' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/><path d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>',
         'block' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path d="m5.7 5.7 12.6 12.6"/></svg>',
         'logout' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-1"/><path d="M15 12H3"/><path d="m6 8-4 4 4 4"/></svg>',
         'chevron' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
@@ -434,6 +435,11 @@ function admin_shell_start(string $title, string $active = ''): void
 <a class="nav-link <?= $active === 'clientes' ? 'active' : ''; ?>" href="clientes.php">
   <span class="nav-icon"><?= admin_icon('clients'); ?></span>
   <span class="nav-text">Clientes</span>
+</a>
+
+<a class="nav-link <?= $active === 'radar' ? 'active' : ''; ?>" href="radar-retornos.php">
+  <span class="nav-icon"><?= admin_icon('radar'); ?></span>
+  <span class="nav-text">Radar de Retornos</span>
 </a>
 
 <a class="nav-link <?= $active === 'relatorios' ? 'active' : ''; ?>" href="relatorios.php">

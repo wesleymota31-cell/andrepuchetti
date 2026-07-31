@@ -2,6 +2,7 @@
 require_once '../config.php';
 require_once '../includes/auth.php';
 require_once '../includes/admin-shell.php';
+require_once '../includes/radar.php';
 
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -161,6 +162,11 @@ if ($filtroAvulsosProfissional !== 'todos') {
     $labelPrevisaoAvulsos = $profissionaisFiltroAvulsos[$profIdFiltro] ?? 'Profissional selecionado';
 }
 
+$radarProfissionalId = usuarioEhAdmin() ? null : usuarioProfissionalId();
+$radarItemsAll = radar_fetch_items($conn, ['profissional_id' => $radarProfissionalId, 'limit' => 160]);
+$radarResumo = radar_summary($radarItemsAll);
+$radarPrioridades = array_slice($radarItemsAll, 0, 5);
+
 function formatarTelefoneDashboard(string $tel): string {
     $numero = preg_replace('/\D+/', '', $tel);
 
@@ -306,6 +312,132 @@ admin_shell_start('Dashboard | André Puchetti', 'agenda');
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
     margin-bottom: 20px;
+  }
+
+  .radar-panel {
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 18px 48px rgba(0,0,0,.34);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .radar-panel-head {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:12px;
+  }
+
+  .radar-panel h2 {
+    margin:0;
+    color:#fff0bd;
+    font-size:1.35rem;
+  }
+
+  .radar-panel p {
+    margin:4px 0 0;
+    color:var(--muted);
+  }
+
+  .radar-link {
+    min-height:40px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+    padding:0 13px;
+    color:#17130b;
+    background:linear-gradient(90deg,#f7e7af,#d4af37,#a87908);
+    text-decoration:none;
+    font-weight:950;
+    white-space:nowrap;
+  }
+
+  .radar-summary-row {
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding-bottom:10px;
+  }
+
+  .radar-mini-card {
+    min-width:132px;
+    border-radius:16px;
+    padding:12px;
+    border:1px solid rgba(255,255,255,.08);
+  }
+
+  .radar-mini-card span {
+    display:block;
+    font-size:.8rem;
+    font-weight:950;
+    color:rgba(247,243,234,.74);
+  }
+
+  .radar-mini-card strong {
+    display:block;
+    margin-top:4px;
+    font-size:1.45rem;
+    color:#fff;
+  }
+
+  .radar-mini-card.late{background:rgba(255,95,109,.12);border-color:rgba(255,95,109,.25)}
+  .radar-mini-card.today{background:rgba(116,90,255,.14);border-color:rgba(116,90,255,.28)}
+  .radar-mini-card.tomorrow{background:rgba(245,166,35,.13);border-color:rgba(245,166,35,.28)}
+  .radar-mini-card.week{background:rgba(50,145,255,.12);border-color:rgba(50,145,255,.25)}
+  .radar-mini-card.risk{background:rgba(193,43,105,.16);border-color:rgba(193,43,105,.30)}
+
+  .radar-priority-list {
+    display:grid;
+    gap:9px;
+    margin-top:4px;
+  }
+
+  .radar-priority-item {
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    border-top:1px solid rgba(255,255,255,.07);
+    padding-top:10px;
+  }
+
+  .radar-priority-item:first-child {
+    border-top:0;
+    padding-top:0;
+  }
+
+  .radar-priority-item strong {
+    display:block;
+    color:#fff0bd;
+  }
+
+  .radar-priority-item small {
+    display:block;
+    color:var(--muted);
+    line-height:1.45;
+  }
+
+  .radar-state {
+    font-weight:950;
+    color:#ffd8dd;
+  }
+
+  .radar-whats-mini {
+    min-height:40px;
+    border-radius:12px;
+    padding:0 12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:#25d366;
+    color:#062312;
+    text-decoration:none;
+    font-weight:950;
+    white-space:nowrap;
   }
 
   .metric-card,
@@ -908,6 +1040,53 @@ admin_shell_start('Dashboard | André Puchetti', 'agenda');
     </div>
   </div>
 </div>
+
+<section class="radar-panel">
+  <div class="radar-panel-head">
+    <div>
+      <h2>Radar de Retornos</h2>
+      <p>Clientes que precisam da sua atenção</p>
+    </div>
+    <a class="radar-link" href="radar-retornos.php">Ver todos os retornos</a>
+  </div>
+
+  <div class="radar-summary-row">
+    <?php
+      $radarCardsDashboard = [
+        ['key' => 'atrasado', 'label' => 'Atrasados', 'class' => 'late'],
+        ['key' => 'hoje', 'label' => 'Hoje', 'class' => 'today'],
+        ['key' => 'amanha', 'label' => 'Amanhã', 'class' => 'tomorrow'],
+        ['key' => 'semana', 'label' => 'Esta semana', 'class' => 'week'],
+        ['key' => 'risco', 'label' => 'Em risco', 'class' => 'risk'],
+      ];
+    ?>
+    <?php foreach ($radarCardsDashboard as $card): ?>
+      <?php if (($radarResumo[$card['key']] ?? 0) <= 0) continue; ?>
+      <div class="radar-mini-card <?= htmlspecialchars($card['class']); ?>">
+        <span><?= htmlspecialchars($card['label']); ?></span>
+        <strong><?= (int)$radarResumo[$card['key']]; ?></strong>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <?php if (!$radarPrioridades): ?>
+    <div class="empty-state" style="padding:18px;margin-top:8px;">Tudo em dia por aqui! Nenhum cliente precisa de atenção agora.</div>
+  <?php else: ?>
+    <div class="radar-priority-list">
+      <?php foreach ($radarPrioridades as $radar): ?>
+        <div class="radar-priority-item">
+          <div>
+            <strong><?= htmlspecialchars($radar['cliente_nome']); ?> · <?= htmlspecialchars($radar['tipo_label']); ?></strong>
+            <small><span class="radar-state"><?= htmlspecialchars($radar['estado_label']); ?></span><br><?= htmlspecialchars($radar['servico_nome']); ?> · <?= (int)$radar['frequencia_dias']; ?> dias</small>
+          </div>
+          <?php if (!empty($radar['whatsapp_phone'])): ?>
+            <a class="radar-whats-mini" href="https://wa.me/<?= htmlspecialchars($radar['whatsapp_phone']); ?>?text=<?= urlencode($radar['whatsapp_message']); ?>" target="_blank" rel="noopener">WhatsApp</a>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</section>
 
 <?php if (!empty($pedidosAnalise)): ?>
   <section class="analysis-panel">

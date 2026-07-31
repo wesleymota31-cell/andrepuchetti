@@ -3,6 +3,7 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/admin-shell.php';
 require_once __DIR__ . '/../includes/phone.php';
+require_once __DIR__ . '/../includes/radar.php';
 
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -670,6 +671,19 @@ $nomeMeses = [
     9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
 ];
 
+$radarDiaContagem = [];
+$radarProfissionalId = $profissionalFiltro !== 'todos' ? (int)$profissionalFiltro : (usuarioEhProfissional() ? usuarioProfissionalId() : null);
+$radarMesItens = radar_fetch_items($conn, ['profissional_id' => $radarProfissionalId, 'limit' => 250]);
+foreach ($radarMesItens as $radarItem) {
+    $radarData = !empty($radarItem['adiado_para']) && $radarItem['adiado_para'] > date('Y-m-d')
+        ? $radarItem['adiado_para']
+        : $radarItem['previsao_data'];
+    if (date('Y-m', strtotime($radarData)) !== sprintf('%04d-%02d', $anoAtual, $mesAtual)) {
+        continue;
+    }
+    $radarDiaContagem[$radarData] = ($radarDiaContagem[$radarData] ?? 0) + 1;
+}
+
 $inicioAgenda = 7;
 $fimAgenda = 22;
 $slotAltura = 54;
@@ -1047,8 +1061,10 @@ admin_shell_start('Agenda Visual | André Puchetti', 'agenda_visual');
     min-height:38px;
     border-radius:14px;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
+    gap:2px;
     text-decoration:none;
     color:rgba(247,243,234,.78);
     background:rgba(255,255,255,.03);
@@ -1065,6 +1081,19 @@ admin_shell_start('Agenda Visual | André Puchetti', 'agenda_visual');
     font-weight:900;
   }
   .day.today { outline:1px solid rgba(212,175,55,.18); }
+  .return-count {
+    min-width:17px;
+    height:17px;
+    border-radius:999px;
+    display:inline-grid;
+    place-items:center;
+    background:rgba(50,145,255,.18);
+    border:1px solid rgba(50,145,255,.30);
+    color:#b9dcff;
+    font-size:10px;
+    line-height:1;
+    font-weight:950;
+  }
 
   .quick-nav { margin-top:18px; display:grid; gap:10px; }
   .quick-btn {
@@ -2046,8 +2075,9 @@ admin_shell_start('Agenda Visual | André Puchetti', 'agenda_visual');
           $isActive = $dataDia === $data;
           $isToday = $dataDia === date('Y-m-d');
         ?>
-        <a class="day <?= $isActive ? 'active' : ''; ?> <?= $isToday ? 'today' : ''; ?>" href="?data=<?= $dataDia; ?>&profissional_id=<?= urlencode($profissionalFiltro); ?>">
-          <?= $dia; ?>
+        <a class="day <?= $isActive ? 'active' : ''; ?> <?= $isToday ? 'today' : ''; ?>" href="?data=<?= $dataDia; ?>&profissional_id=<?= urlencode($profissionalFiltro); ?>" title="<?= (int)($radarDiaContagem[$dataDia] ?? 0); ?> retorno(s)">
+          <span><?= $dia; ?></span>
+          <?php if (!empty($radarDiaContagem[$dataDia])): ?><span class="return-count"><?= (int)$radarDiaContagem[$dataDia]; ?></span><?php endif; ?>
         </a>
       <?php endfor; ?>
     </div>
