@@ -30,11 +30,6 @@ $items = radar_fetch_items($conn, [
     'limit' => 80,
 ]);
 
-$focusBuckets = [
-    'hoje' => array_values(array_filter($allItemsForSummary, fn($item) => ($item['estado_key'] ?? '') === 'hoje')),
-    'amanha' => array_values(array_filter($allItemsForSummary, fn($item) => ($item['estado_key'] ?? '') === 'amanha')),
-];
-
 $summaryCards = [
     'atrasado' => ['label' => 'Atrasados', 'icon' => '!', 'class' => 'late', 'filter' => 'atrasados'],
     'semana' => ['label' => 'Esta semana', 'icon' => '7', 'class' => 'week', 'filter' => 'semana'],
@@ -50,13 +45,66 @@ function radar_chip_url(array $params): string
     return '?' . http_build_query($base);
 }
 
+function radar_fetch_upcoming_agenda(mysqli $conn, string $date, ?int $profissionalId): array
+{
+    $sql = "
+        SELECT
+            ag.id,
+            ag.hora,
+            c.nome AS cliente_nome,
+            p.nome AS profissional_nome,
+            s.nome AS servico_nome
+        FROM agendamentos ag
+        INNER JOIN clientes c ON c.id = ag.cliente_id
+        INNER JOIN profissionais p ON p.id = ag.profissional_id
+        INNER JOIN servicos s ON s.id = ag.servico_id
+        WHERE ag.data = ?
+          AND ag.status IN ('confirmado', 'pendente')
+    ";
+    $params = [$date];
+    $types = 's';
+
+    if ($profissionalId !== null) {
+        $sql .= " AND ag.profissional_id = ?";
+        $params[] = $profissionalId;
+        $types .= 'i';
+    }
+
+    $sql .= " ORDER BY ag.hora ASC LIMIT 12";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $rows = [];
+    while ($result && $row = $result->fetch_assoc()) {
+        $rows[] = $row;
+    }
+
+    return $rows;
+}
+
+function radar_agenda_url(string $date, ?int $profissionalId): string
+{
+    $params = ['data' => $date];
+    if ($profissionalId !== null) $params['profissional_id'] = $profissionalId;
+    return 'agenda-visual.php?' . http_build_query($params);
+}
+
+$todayDate = date('Y-m-d');
+$tomorrowDate = date('Y-m-d', strtotime('+1 day'));
+$focusBuckets = [
+    'hoje' => radar_fetch_upcoming_agenda($conn, $todayDate, $profId),
+    'amanha' => radar_fetch_upcoming_agenda($conn, $tomorrowDate, $profId),
+];
+
 admin_shell_start('Radar de Retornos | André Puchetti', 'radar');
 ?>
 <style>
   .radar-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}.radar-hero h1{margin:0;color:#fff0bd;font-size:clamp(2rem,7vw,4rem);line-height:.95}.radar-hero p{margin:8px 0 0;color:rgba(247,243,234,.72)}
   .radar-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.radar-toolbar input,.radar-toolbar select{min-height:44px;border:1px solid rgba(255,255,255,.1);background:#111;color:#f7f3ea;border-radius:12px;padding:0 12px}.radar-toolbar button{min-height:44px;border:0;border-radius:12px;background:#d4af37;color:#17130b;font-weight:900;padding:0 16px}
   .radar-flash{padding:12px 14px;border-radius:16px;margin-bottom:14px;font-weight:900}.radar-flash.sucesso{background:rgba(32,201,151,.12);color:#d9fff1}.radar-flash.erro{background:rgba(255,95,109,.13);color:#ffd8dd}
-  .radar-focus-grid{display:grid;gap:12px;margin-bottom:12px}.focus-card{min-height:158px;border:1px solid rgba(212,175,55,.22);background:linear-gradient(145deg,rgba(212,175,55,.13),rgba(255,255,255,.035));border-radius:18px;padding:18px;text-decoration:none;color:#f7f3ea;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.focus-card.tomorrow{background:linear-gradient(145deg,rgba(245,166,35,.12),rgba(255,255,255,.035))}.focus-kicker{font-size:.75rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#fff0bd}.focus-number{font-size:clamp(2.6rem,8vw,4.2rem);line-height:.9;color:#fff;font-weight:950;margin:8px 0}.focus-empty{font-size:clamp(1.45rem,5vw,2.1rem);line-height:1.05;color:#fff;font-weight:950;margin:10px 0}.focus-label{color:rgba(247,243,234,.72);font-weight:800}.focus-names{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.focus-names span{border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.22);border-radius:9px;padding:6px 8px;font-size:.8rem;font-weight:900;color:rgba(247,243,234,.86)}
+  .radar-focus-grid{display:grid;gap:12px;margin-bottom:12px}.focus-card{min-height:158px;border:1px solid rgba(212,175,55,.22);background:linear-gradient(145deg,rgba(212,175,55,.13),rgba(255,255,255,.035));border-radius:18px;padding:18px;text-decoration:none;color:#f7f3ea;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.focus-card.tomorrow{background:linear-gradient(145deg,rgba(245,166,35,.12),rgba(255,255,255,.035))}.focus-kicker{font-size:.75rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#fff0bd}.focus-number{font-size:clamp(2.6rem,8vw,4.2rem);line-height:.9;color:#fff;font-weight:950;margin:8px 0}.focus-empty{font-size:clamp(1.45rem,5vw,2.1rem);line-height:1.05;color:#fff;font-weight:950;margin:10px 0}.focus-label{color:rgba(247,243,234,.72);font-weight:800}.focus-names{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.focus-names span{border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.22);border-radius:9px;padding:6px 8px;font-size:.8rem;font-weight:900;color:rgba(247,243,234,.86)}.focus-time{color:#fff0bd;margin-right:4px}
   .radar-summary{display:flex;gap:10px;overflow-x:auto;padding:2px 0 12px;margin-bottom:10px;scroll-snap-type:x proximity}.summary-card{scroll-snap-align:start;min-width:148px;border-radius:14px;padding:13px;border:1px solid rgba(255,255,255,.08);text-decoration:none;color:#f7f3ea;background:rgba(255,255,255,.04)}.summary-card strong{display:block;font-size:1.45rem;color:#fff}.summary-card span{display:flex;align-items:center;gap:7px;color:rgba(247,243,234,.78);font-weight:900;font-size:.9rem}.summary-card .dot{width:22px;height:22px;border-radius:8px;display:grid;place-items:center;font-size:.75rem}.summary-card.late{background:rgba(255,95,109,.10);border-color:rgba(255,95,109,.22)}.summary-card.late .dot{background:#ff5f6d;color:#1b080b}.summary-card.week{background:rgba(50,145,255,.10);border-color:rgba(50,145,255,.22)}.summary-card.week .dot{background:#3291ff}.summary-card.risk{background:rgba(193,43,105,.13);border-color:rgba(193,43,105,.26)}.summary-card.risk .dot{background:#c12b69}
   .filter-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px;padding:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:16px}.filter-tabs{display:flex;gap:4px;overflow-x:auto}.filter-tab{white-space:nowrap;text-decoration:none;color:rgba(247,243,234,.72);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 12px;font-weight:900}.filter-tab:hover{background:rgba(255,255,255,.055);color:#f7f3ea}.filter-tab.active{background:rgba(212,175,55,.13);border-color:rgba(212,175,55,.28);color:#fff0bd}.filter-type select{min-height:40px;border:1px solid rgba(255,255,255,.1);background:#101010;color:#f7f3ea;border-radius:10px;padding:0 10px;font-weight:800}
   .radar-list{display:grid;gap:10px}.radar-card{border:1px solid rgba(255,255,255,.08);background:rgba(18,18,18,.82);border-radius:18px;padding:14px}.radar-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.radar-name{font-size:1.02rem;font-weight:950;color:#fff0bd}.type-badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:.76rem;font-weight:950;border:1px solid rgba(255,255,255,.1);color:#f7f3ea}.type-badge.recorrente{background:rgba(32,201,151,.12)}.type-badge.avulso{background:rgba(245,166,35,.10)}.type-badge.novo{background:rgba(116,90,255,.13)}.type-badge.em_formacao{background:rgba(50,145,255,.12)}
@@ -92,23 +140,23 @@ admin_shell_start('Radar de Retornos | André Puchetti', 'radar');
 </form>
 
 <div class="radar-focus-grid">
-  <?php foreach (['hoje' => 'Próximos de hoje', 'amanha' => 'Próximos de amanhã'] as $key => $label): ?>
+  <?php foreach (['hoje' => ['label' => 'Agenda de hoje', 'date' => $todayDate], 'amanha' => ['label' => 'Agenda de amanhã', 'date' => $tomorrowDate]] as $key => $info): ?>
     <?php $bucket = $focusBuckets[$key]; ?>
-    <a class="focus-card <?= $key === 'amanha' ? 'tomorrow' : 'today'; ?>" href="<?= htmlspecialchars(radar_chip_url(['filtro' => $key])); ?>">
+    <a class="focus-card <?= $key === 'amanha' ? 'tomorrow' : 'today'; ?>" href="<?= htmlspecialchars(radar_agenda_url($info['date'], $profId)); ?>">
       <div>
-        <div class="focus-kicker"><?= htmlspecialchars($label); ?></div>
+        <div class="focus-kicker"><?= htmlspecialchars($info['label']); ?></div>
         <?php if ($bucket): ?>
           <div class="focus-number"><?= count($bucket); ?></div>
-          <div class="focus-label"><?= count($bucket) === 1 ? 'cliente próximo' : 'clientes próximos'; ?></div>
+          <div class="focus-label"><?= count($bucket) === 1 ? 'agendamento marcado' : 'agendamentos marcados'; ?></div>
         <?php else: ?>
-          <div class="focus-empty">Sem clientes</div>
-          <div class="focus-label">Nada previsto para <?= $key === 'hoje' ? 'hoje' : 'amanhã'; ?></div>
+          <div class="focus-empty">Agenda livre</div>
+          <div class="focus-label">Nenhum horário marcado para <?= $key === 'hoje' ? 'hoje' : 'amanhã'; ?></div>
         <?php endif; ?>
       </div>
       <?php if ($bucket): ?>
         <div class="focus-names">
           <?php foreach (array_slice($bucket, 0, 4) as $person): ?>
-            <span><?= htmlspecialchars(radar_first_name($person['cliente_nome'])); ?></span>
+            <span><b class="focus-time"><?= htmlspecialchars(substr((string)$person['hora'], 0, 5)); ?></b><?= htmlspecialchars(radar_first_name($person['cliente_nome'])); ?></span>
           <?php endforeach; ?>
           <?php if (count($bucket) > 4): ?><span>+<?= count($bucket) - 4; ?></span><?php endif; ?>
         </div>
