@@ -236,7 +236,7 @@ function radar_state(mysqli $conn, array $row): array
     $target = !empty($row['adiado_para']) && $row['adiado_para'] > date('Y-m-d') ? $row['adiado_para'] : $row['previsao_data'];
     $diff = (int)floor((strtotime($target) - strtotime(date('Y-m-d'))) / 86400);
 
-    if ($diff < -7) return ['key' => 'risco', 'label' => 'Cliente em risco', 'priority' => (string)$row['classificacao'] === 'recorrente' ? 1 : 5];
+    if ($diff < -14 && (string)$row['classificacao'] === 'recorrente') return ['key' => 'risco', 'label' => 'Recorrente muito atrasado', 'priority' => 1];
     if ($diff < 0) return ['key' => 'atrasado', 'label' => 'Atrasado ha ' . abs($diff) . ' dia' . (abs($diff) === 1 ? '' : 's'), 'priority' => (string)$row['classificacao'] === 'recorrente' ? 2 : 5];
     if ($diff === 0) return ['key' => 'hoje', 'label' => 'Retorno previsto para hoje', 'priority' => 3];
     if ($diff === 1) return ['key' => 'amanha', 'label' => 'Retorno previsto para amanha', 'priority' => 4];
