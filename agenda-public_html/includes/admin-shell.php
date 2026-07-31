@@ -439,7 +439,7 @@ function admin_shell_start(string $title, string $active = ''): void
 
 <a class="nav-link <?= $active === 'radar' ? 'active' : ''; ?>" href="radar-retornos.php">
   <span class="nav-icon"><?= admin_icon('radar'); ?></span>
-  <span class="nav-text">Radar de Retornos</span>
+  <span class="nav-text">Central de Lembretes</span>
 </a>
 
 <a class="nav-link <?= $active === 'relatorios' ? 'active' : ''; ?>" href="relatorios.php">

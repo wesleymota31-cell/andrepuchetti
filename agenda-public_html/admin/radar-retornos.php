@@ -98,10 +98,11 @@ $focusBuckets = [
     'amanha' => radar_fetch_upcoming_agenda($conn, $tomorrowDate, $profId),
 ];
 
-admin_shell_start('Radar de Retornos | André Puchetti', 'radar');
+admin_shell_start('Central de Lembretes | André Puchetti', 'radar');
 ?>
 <style>
   .radar-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}.radar-hero h1{margin:0;color:#fff0bd;font-size:clamp(2rem,7vw,4rem);line-height:.95}.radar-hero p{margin:8px 0 0;color:rgba(247,243,234,.72)}
+  .module-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:18px 0 10px}.module-heading h2{margin:0;color:#fff0bd;font-size:clamp(1.25rem,4vw,1.85rem)}.module-heading p{margin:4px 0 0;color:rgba(247,243,234,.62);font-weight:700}
   .radar-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.radar-toolbar input,.radar-toolbar select{min-height:44px;border:1px solid rgba(255,255,255,.1);background:#111;color:#f7f3ea;border-radius:12px;padding:0 12px}.radar-toolbar button{min-height:44px;border:0;border-radius:12px;background:#d4af37;color:#17130b;font-weight:900;padding:0 16px}
   .radar-flash{padding:12px 14px;border-radius:16px;margin-bottom:14px;font-weight:900}.radar-flash.sucesso{background:rgba(32,201,151,.12);color:#d9fff1}.radar-flash.erro{background:rgba(255,95,109,.13);color:#ffd8dd}
   .radar-focus-grid{display:grid;gap:12px;margin-bottom:12px}.focus-card{min-height:158px;border:1px solid rgba(212,175,55,.22);background:linear-gradient(145deg,rgba(212,175,55,.13),rgba(255,255,255,.035));border-radius:18px;padding:18px;text-decoration:none;color:#f7f3ea;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.focus-card.tomorrow{background:linear-gradient(145deg,rgba(245,166,35,.12),rgba(255,255,255,.035))}.focus-kicker{font-size:.75rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#fff0bd}.focus-number{font-size:clamp(2.6rem,8vw,4.2rem);line-height:.9;color:#fff;font-weight:950;margin:8px 0}.focus-empty{font-size:clamp(1.45rem,5vw,2.1rem);line-height:1.05;color:#fff;font-weight:950;margin:10px 0}.focus-label{color:rgba(247,243,234,.72);font-weight:800}.focus-names{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.focus-names span{border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.22);border-radius:9px;padding:6px 8px;font-size:.8rem;font-weight:900;color:rgba(247,243,234,.86)}.focus-time{color:#fff0bd;margin-right:4px}
@@ -117,8 +118,8 @@ admin_shell_start('Radar de Retornos | André Puchetti', 'radar');
 
 <div class="radar-hero">
   <div>
-    <h1>Radar de Retornos</h1>
-    <p>Clientes que precisam da sua atenção</p>
+    <h1>Central de Lembretes</h1>
+    <p>Agenda próxima, retornos e clientes que precisam de acompanhamento.</p>
   </div>
 </div>
 
@@ -163,6 +164,13 @@ admin_shell_start('Radar de Retornos | André Puchetti', 'radar');
       <?php endif; ?>
     </a>
   <?php endforeach; ?>
+</div>
+
+<div class="module-heading">
+  <div>
+    <h2>Radar de retornos</h2>
+    <p>Clientes com previsão de voltar, atrasados ou pedindo atenção especial.</p>
+  </div>
 </div>
 
 <div class="radar-summary">
