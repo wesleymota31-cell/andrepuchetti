@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login.php
+Disallow: /forgot-password.php
+Disallow: /reset-password.php
+Disallow: /confirmar.php
+Disallow: /analise-servico.php
+
+Sitemap: https://agenda.andrepuchetti.com.br/sitemap.xml

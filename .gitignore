@@ -1,0 +1,24 @@
+# Only version the Andre Puchetti agenda project from this workspace.
+/obraview-360/
+/obraview-360-php/
+/ssh_keys/
+
+# Local/runtime files
+*.log
+error_log
+agenda-visual-errors.log
+.DS_Store
+
+# Secrets and environment files
+.env
+.env.*
+agenda_config.php
+*.sql
+*.dump
+*.bak
+
+# Dependencies/build output
+vendor/
+node_modules/
+dist/
+build/
