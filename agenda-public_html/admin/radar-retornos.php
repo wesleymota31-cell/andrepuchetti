@@ -132,16 +132,16 @@ admin_shell_start('Central de Lembretes | André Puchetti', 'radar');
   .module-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:18px 0 10px}.module-heading h2{margin:0;color:#fff0bd;font-size:clamp(1.25rem,4vw,1.85rem)}.module-heading p{margin:4px 0 0;color:rgba(247,243,234,.62);font-weight:700}
   .radar-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.radar-toolbar input,.radar-toolbar select{min-height:44px;border:1px solid rgba(255,255,255,.1);background:#111;color:#f7f3ea;border-radius:12px;padding:0 12px}.radar-toolbar button{min-height:44px;border:0;border-radius:12px;background:#d4af37;color:#17130b;font-weight:900;padding:0 16px}
   .radar-flash{padding:12px 14px;border-radius:16px;margin-bottom:14px;font-weight:900}.radar-flash.sucesso{background:rgba(32,201,151,.12);color:#d9fff1}.radar-flash.erro{background:rgba(255,95,109,.13);color:#ffd8dd}
-  .radar-focus-grid{display:grid;gap:12px;margin-bottom:12px}.focus-card{min-height:158px;border:1px solid rgba(212,175,55,.22);background:linear-gradient(145deg,rgba(212,175,55,.13),rgba(255,255,255,.035));border-radius:18px;padding:18px;color:#f7f3ea;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.focus-card.tomorrow{background:linear-gradient(145deg,rgba(245,166,35,.12),rgba(255,255,255,.035))}.focus-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.focus-kicker{font-size:.75rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#fff0bd}.focus-number{font-size:clamp(2.6rem,8vw,4.2rem);line-height:.9;color:#fff;font-weight:950;margin:8px 0}.focus-empty{font-size:clamp(1.45rem,5vw,2.1rem);line-height:1.05;color:#fff;font-weight:950;margin:10px 0}.focus-label{color:rgba(247,243,234,.72);font-weight:800}.focus-open{color:#fff0bd;text-decoration:none;font-weight:900;font-size:.82rem;border-bottom:1px solid rgba(212,175,55,.38);padding-bottom:2px}.focus-list{display:grid;gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,.08)}.focus-row{width:100%;display:grid;grid-template-columns:58px 1fr auto;gap:10px;align-items:center;min-height:42px;padding:9px 0;border:0;border-bottom:1px solid rgba(255,255,255,.07);background:transparent;color:#f7f3ea;text-align:left;cursor:pointer}.focus-row:hover .focus-client{color:#fff0bd}.focus-row:last-child{border-bottom:0}.focus-time{color:#fff0bd;font-weight:950}.focus-client{font-weight:950;transition:color .18s ease}.focus-service{color:rgba(247,243,234,.55);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.focus-more{margin-top:10px;color:rgba(247,243,234,.62);font-weight:900;font-size:.82rem}
+  .radar-focus-grid{display:grid;gap:12px;margin-bottom:12px}.focus-card{min-height:158px;border:1px solid rgba(212,175,55,.22);background:linear-gradient(145deg,rgba(212,175,55,.13),rgba(255,255,255,.035));border-radius:18px;padding:18px;color:#f7f3ea;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.focus-card.tomorrow{background:linear-gradient(145deg,rgba(245,166,35,.12),rgba(255,255,255,.035))}.focus-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.focus-kicker{font-size:.75rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#fff0bd}.focus-number{font-size:clamp(2.6rem,8vw,4.2rem);line-height:.9;color:#fff;font-weight:950;margin:8px 0}.focus-empty{font-size:clamp(1.45rem,5vw,2.1rem);line-height:1.05;color:#fff;font-weight:950;margin:10px 0}.focus-label{color:rgba(247,243,234,.72);font-weight:800}.focus-open{color:#fff0bd;text-decoration:none;font-weight:900;font-size:.82rem;border-bottom:1px solid rgba(212,175,55,.38);padding-bottom:2px}.focus-list{display:grid;gap:0;margin-top:12px;border-top:1px solid rgba(255,255,255,.08)}.focus-row{width:100%;display:grid;grid-template-columns:58px 1fr auto;gap:10px;align-items:center;min-height:42px;padding:9px 0;border:0;border-bottom:1px solid rgba(255,255,255,.07);background:transparent;color:#f7f3ea;text-align:left;cursor:pointer}.focus-row:hover .focus-client{color:#fff0bd}.focus-row:last-child{border-bottom:0}.focus-row.is-extra{display:none}.focus-list.is-expanded .focus-row.is-extra{display:grid}.focus-time{color:#fff0bd;font-weight:950}.focus-client{font-weight:950;transition:color .18s ease}.focus-service{color:rgba(247,243,234,.55);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.focus-more{margin-top:10px;border:0;background:transparent;color:#fff0bd;font-weight:950;font-size:.86rem;padding:8px 0;text-align:left;cursor:pointer}
   .radar-summary{display:flex;gap:10px;overflow-x:auto;padding:2px 0 12px;margin-bottom:10px;scroll-snap-type:x proximity}.summary-card{scroll-snap-align:start;min-width:148px;border-radius:14px;padding:13px;border:1px solid rgba(255,255,255,.08);text-decoration:none;color:#f7f3ea;background:rgba(255,255,255,.04)}.summary-card strong{display:block;font-size:1.45rem;color:#fff}.summary-card span{display:flex;align-items:center;gap:7px;color:rgba(247,243,234,.78);font-weight:900;font-size:.9rem}.summary-card .dot{width:22px;height:22px;border-radius:8px;display:grid;place-items:center;font-size:.75rem}.summary-card.late{background:rgba(255,95,109,.10);border-color:rgba(255,95,109,.22)}.summary-card.late .dot{background:#ff5f6d;color:#1b080b}.summary-card.week{background:rgba(50,145,255,.10);border-color:rgba(50,145,255,.22)}.summary-card.week .dot{background:#3291ff}.summary-card.risk{background:rgba(193,43,105,.13);border-color:rgba(193,43,105,.26)}.summary-card.risk .dot{background:#c12b69}
-  .filter-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 14px;padding:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:16px}.filter-tabs{display:flex;gap:4px;overflow-x:auto}.filter-tab{white-space:nowrap;text-decoration:none;color:rgba(247,243,234,.72);border:1px solid transparent;background:transparent;border-radius:9px;padding:10px 12px;font-weight:900}.filter-tab:hover{background:rgba(255,255,255,.055);color:#f7f3ea}.filter-tab.active{background:rgba(212,175,55,.13);border-color:rgba(212,175,55,.28);color:#fff0bd}.filter-type select{min-height:40px;border:1px solid rgba(255,255,255,.1);background:#101010;color:#f7f3ea;border-radius:10px;padding:0 10px;font-weight:800}
+  .filter-bar{display:flex;align-items:end;gap:10px;margin:2px 0 14px;padding:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);border-radius:16px}.filter-field{display:grid;gap:6px}.filter-field label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#fff0bd;font-weight:950}.filter-field select{min-height:42px;border:1px solid rgba(255,255,255,.1);background:#101010;color:#f7f3ea;border-radius:10px;padding:0 12px;font-weight:800;min-width:180px}.filter-bar button{min-height:42px;border:0;border-radius:10px;background:rgba(212,175,55,.16);border:1px solid rgba(212,175,55,.28);color:#fff0bd;font-weight:950;padding:0 14px}
   .radar-list{display:grid;gap:10px}.radar-card{border:1px solid rgba(255,255,255,.08);background:rgba(18,18,18,.82);border-radius:18px;padding:14px}.radar-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.radar-name{font-size:1.02rem;font-weight:950;color:#fff0bd}.type-badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:.76rem;font-weight:950;border:1px solid rgba(255,255,255,.1);color:#f7f3ea}.type-badge.recorrente{background:rgba(32,201,151,.12)}.type-badge.avulso{background:rgba(245,166,35,.10)}.type-badge.novo{background:rgba(116,90,255,.13)}.type-badge.em_formacao{background:rgba(50,145,255,.12)}
   .state-line{margin-top:10px;font-weight:950;letter-spacing:.02em}.state-line.atrasado{color:#ffb8bf}.state-line.risco{color:#ff9ec3}.state-line.hoje{color:#d4ccff}.state-line.amanha{color:#ffd89a}.state-line.semana{color:#b9dcff}.state-line.contatado,.state-line.aguardando_resposta{color:#cbd5e1}.radar-meta{margin-top:6px;color:rgba(247,243,234,.7);line-height:1.45;font-size:.92rem}.radar-actions{display:flex;gap:8px;margin-top:12px;align-items:center}.whats-btn{flex:1;min-height:46px;border:0;border-radius:14px;background:linear-gradient(135deg,#25d366,#128c4a);color:#062312;font-weight:950}.whats-btn:disabled{background:rgba(255,255,255,.07);color:rgba(247,243,234,.45)}.menu-wrap{position:relative}.menu-btn{width:46px;height:46px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#f7f3ea;font-size:1.25rem}.menu-panel{display:none;position:absolute;right:0;top:52px;width:220px;background:#101010;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:8px;z-index:5;box-shadow:0 20px 50px rgba(0,0,0,.35)}.menu-panel.open{display:grid}.menu-panel button,.menu-panel a{min-height:40px;border:0;background:transparent;color:#f7f3ea;text-align:left;border-radius:10px;padding:0 10px;text-decoration:none;font-weight:800}.menu-panel button:hover,.menu-panel a:hover{background:rgba(255,255,255,.06)}
   .empty-radar{padding:26px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.04);text-align:center;color:rgba(247,243,234,.75)}.empty-radar strong{display:block;color:#fff0bd;font-size:1.2rem;margin-bottom:6px}
   .wa-preview{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;z-index:50}.wa-preview.open{display:flex}.wa-box{width:100%;max-width:540px;background:#101010;border:1px solid rgba(255,255,255,.1);border-radius:22px 22px 0 0;padding:18px}.wa-box h3{margin:0 0 12px;color:#fff0bd}.wa-box textarea{width:100%;min-height:170px;border:1px solid rgba(255,255,255,.1);background:#080808;color:#f7f3ea;border-radius:14px;padding:12px;font-size:15px;line-height:1.45}.wa-actions{display:grid;gap:8px;margin-top:12px}.wa-actions a,.wa-actions button{min-height:48px;border:0;border-radius:14px;font-weight:950;text-decoration:none;display:grid;place-items:center}.wa-actions a{background:#25d366;color:#062312}.wa-actions button{background:rgba(255,255,255,.06);color:#f7f3ea}
   .appointment-preview{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;z-index:55}.appointment-preview.open{display:flex}.appointment-box{width:100%;max-width:560px;background:#101010;border:1px solid rgba(255,255,255,.1);border-radius:22px 22px 0 0;padding:18px;box-shadow:0 26px 80px rgba(0,0,0,.5)}.appointment-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.appointment-box h3{margin:0;color:#fff0bd;font-size:1.35rem}.modal-close{width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#f7f3ea;font-weight:950}.appointment-details{display:grid;gap:8px;margin:14px 0;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.035)}.appointment-details div{display:flex;justify-content:space-between;gap:12px;color:rgba(247,243,234,.68)}.appointment-details strong{color:#f7f3ea;text-align:right}.suggestion-list{display:grid;gap:8px}.suggestion-btn{min-height:44px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.045);color:#f7f3ea;font-weight:900;text-align:left;padding:0 12px}.suggestion-btn.active{border-color:rgba(212,175,55,.38);background:rgba(212,175,55,.13);color:#fff0bd}.appointment-box textarea{width:100%;min-height:132px;border:1px solid rgba(255,255,255,.1);background:#080808;color:#f7f3ea;border-radius:14px;padding:12px;font-size:15px;line-height:1.45;margin-top:10px}.appointment-wa{min-height:48px;border-radius:14px;background:#25d366;color:#062312;font-weight:950;text-decoration:none;display:grid;place-items:center;margin-top:10px}.appointment-wa.disabled{pointer-events:none;background:rgba(255,255,255,.07);color:rgba(247,243,234,.45)}
   @media(min-width:780px){.radar-focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.radar-list{grid-template-columns:repeat(2,minmax(0,1fr))}.wa-preview,.appointment-preview{align-items:center}.wa-box,.appointment-box{border-radius:22px}.radar-toolbar input{min-width:260px}}
-  @media(max-width:640px){.filter-bar{display:block}.filter-tabs{padding-bottom:8px}.filter-type select{width:100%}.radar-toolbar input,.radar-toolbar select,.radar-toolbar button{width:100%}.focus-row{grid-template-columns:54px 1fr}.focus-service{grid-column:2}.appointment-details div{display:block}.appointment-details strong{display:block;text-align:left;margin-top:2px}}
+  @media(max-width:640px){.filter-bar{display:grid}.filter-field select,.filter-bar button{width:100%}.radar-toolbar input,.radar-toolbar select,.radar-toolbar button{width:100%}.focus-row{grid-template-columns:54px 1fr}.focus-service{grid-column:2}.appointment-details div{display:block}.appointment-details strong{display:block;text-align:left;margin-top:2px}}
 </style>
 
 <div class="radar-hero">
@@ -189,9 +189,9 @@ admin_shell_start('Central de Lembretes | André Puchetti', 'radar');
       </div>
       <?php if ($bucket): ?>
         <div class="focus-list">
-          <?php foreach (array_slice($bucket, 0, 5) as $person): ?>
+          <?php foreach ($bucket as $index => $person): ?>
             <?php $messages = radar_agenda_whatsapp_messages($person); ?>
-            <button class="focus-row js-appointment" type="button"
+            <button class="focus-row js-appointment <?= $index >= 5 ? 'is-extra' : ''; ?>" type="button"
               data-client="<?= htmlspecialchars($person['cliente_nome'], ENT_QUOTES); ?>"
               data-phone="<?= htmlspecialchars($person['whatsapp_phone'], ENT_QUOTES); ?>"
               data-date="<?= htmlspecialchars(radar_date_br($person['data']), ENT_QUOTES); ?>"
@@ -206,7 +206,7 @@ admin_shell_start('Central de Lembretes | André Puchetti', 'radar');
               <span class="focus-service"><?= htmlspecialchars($person['servico_nome']); ?></span>
             </button>
           <?php endforeach; ?>
-          <?php if (count($bucket) > 5): ?><div class="focus-more">+<?= count($bucket) - 5; ?> horários na agenda</div><?php endif; ?>
+          <?php if (count($bucket) > 5): ?><button class="focus-more js-show-more" type="button">Ver mais</button><?php endif; ?>
         </div>
       <?php endif; ?>
     </section>
@@ -231,24 +231,28 @@ admin_shell_start('Central de Lembretes | André Puchetti', 'radar');
   <?php endforeach; ?>
 </div>
 
-<div class="filter-bar">
-  <div class="filter-tabs">
-    <?php foreach (['prioridades'=>'Prioridades','hoje'=>'Hoje','amanha'=>'Amanhã','semana'=>'Esta semana','atrasados'=>'Atrasados','risco'=>'Atenção especial'] as $filter => $label): ?>
-      <a class="filter-tab <?= $stateFilter === $filter ? 'active' : ''; ?>" href="<?= htmlspecialchars(radar_chip_url(['filtro' => $filter])); ?>"><?= htmlspecialchars($label); ?></a>
-    <?php endforeach; ?>
-  </div>
-  <form class="filter-type" method="get">
+<form class="filter-bar" method="get">
     <input type="hidden" name="q" value="<?= htmlspecialchars($q); ?>">
-    <input type="hidden" name="filtro" value="<?= htmlspecialchars($stateFilter); ?>">
     <?php if (usuarioEhAdmin()): ?><input type="hidden" name="profissional_id" value="<?= htmlspecialchars((string)$profissionalFiltro); ?>"><?php endif; ?>
-    <select name="tipo" onchange="this.form.submit()">
-      <option value="">Todos os tipos</option>
-      <?php foreach (['recorrente'=>'Recorrentes','avulso'=>'Avulsos','novo'=>'Novos','em_formacao'=>'Em formação'] as $type => $label): ?>
-        <option value="<?= htmlspecialchars($type); ?>" <?= $typeFilter === $type ? 'selected' : ''; ?>><?= htmlspecialchars($label); ?></option>
-      <?php endforeach; ?>
-    </select>
-  </form>
-</div>
+    <div class="filter-field">
+      <label for="filtro-radar">Situação</label>
+      <select id="filtro-radar" name="filtro">
+        <?php foreach (['prioridades'=>'Prioridades','hoje'=>'Hoje','amanha'=>'Amanhã','semana'=>'Esta semana','atrasados'=>'Atrasados','risco'=>'Atenção especial'] as $filter => $label): ?>
+          <option value="<?= htmlspecialchars($filter); ?>" <?= $stateFilter === $filter ? 'selected' : ''; ?>><?= htmlspecialchars($label); ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="filter-field">
+      <label for="tipo-radar">Tipo</label>
+      <select id="tipo-radar" name="tipo">
+        <option value="">Todos os tipos</option>
+        <?php foreach (['recorrente'=>'Recorrentes','avulso'=>'Avulsos','novo'=>'Novos','em_formacao'=>'Em formação'] as $type => $label): ?>
+          <option value="<?= htmlspecialchars($type); ?>" <?= $typeFilter === $type ? 'selected' : ''; ?>><?= htmlspecialchars($label); ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <button type="submit">Aplicar</button>
+</form>
 
 <?php if (!$items): ?>
   <div class="empty-radar"><strong>Tudo em dia por aqui!</strong>Nenhum cliente precisa de atenção agora. Os próximos retornos aparecerão automaticamente.</div>
@@ -332,6 +336,7 @@ admin_shell_start('Central de Lembretes | André Puchetti', 'radar');
 <script>
 document.querySelectorAll('.js-menu').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.menu-panel').forEach(p=>{if(p!==btn.nextElementSibling)p.classList.remove('open')});btn.nextElementSibling.classList.toggle('open')}));
 document.addEventListener('click',()=>document.querySelectorAll('.menu-panel').forEach(p=>p.classList.remove('open')));
+document.querySelectorAll('.js-show-more').forEach(btn=>btn.addEventListener('click',()=>{const list=btn.closest('.focus-list');if(!list)return;list.classList.add('is-expanded');btn.remove()}));
 const wa=document.getElementById('waPreview'), waText=document.getElementById('waText'), waOpen=document.getElementById('waOpen'), waTitle=document.getElementById('waTitle'), waRadarId=document.getElementById('waRadarId');
 document.querySelectorAll('.js-wa').forEach(btn=>btn.addEventListener('click',()=>{waTitle.textContent='Mensagem para '+btn.dataset.name;waText.value=btn.dataset.message;waRadarId.value=btn.dataset.id;waOpen.href='https://wa.me/'+btn.dataset.phone+'?text='+encodeURIComponent(waText.value);wa.classList.add('open')}));
 waText.addEventListener('input',()=>{const current=document.querySelector('.js-wa[data-id="'+waRadarId.value+'"]');if(current)waOpen.href='https://wa.me/'+current.dataset.phone+'?text='+encodeURIComponent(waText.value)});
