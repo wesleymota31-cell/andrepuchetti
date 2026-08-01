@@ -8,7 +8,7 @@ radar_ensure_schema($conn);
 
 function radar_redirect_action(string $flash, string $msg): void
 {
-    $back = $_POST['return_to'] ?? $_SERVER['HTTP_REFERER'] ?? 'index.php';
+    $back = $_POST['return_to'] ?? $_SERVER['HTTP_REFERER'] ?? 'radar-retornos.php';
     $sep = str_contains($back, '?') ? '&' : '?';
     header('Location: ' . $back . $sep . 'flash=' . urlencode($flash) . '&msg=' . urlencode($msg));
     exit;
@@ -18,66 +18,91 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_validate($_POST['csrf_token']
     radar_redirect_action('erro', 'Ação expirada. Tente novamente.');
 }
 
-$id = (int)($_POST['id'] ?? 0);
 $action = $_POST['radar_action'] ?? '';
 
-$stmt = $conn->prepare("SELECT id, profissional_id FROM radar_retornos WHERE id = ? LIMIT 1");
+if ($action === 'salvar') {
+    $id = (int)($_POST['id'] ?? 0);
+    $nome = trim($_POST['cliente_nome'] ?? '');
+    $telefone = trim($_POST['cliente_telefone'] ?? '');
+    $profissionalId = usuarioEhAdmin() ? (int)($_POST['profissional_id'] ?? 0) : (int)(usuarioProfissionalId() ?? 0);
+    $frequencia = max(1, min(120, (int)($_POST['frequencia_dias'] ?? 15)));
+    $avisar = max(1, min($frequencia, (int)($_POST['avisar_com_dias'] ?? max(1, $frequencia - 2))));
+    $ultimo = trim($_POST['ultimo_atendimento'] ?? '');
+    $observacao = trim($_POST['observacao'] ?? '');
+
+    $validDate = DateTime::createFromFormat('Y-m-d', $ultimo);
+    $phone = normalizarTelefoneCliente($telefone);
+
+    if ($nome === '' || !$phone['valid'] || !$validDate || $validDate->format('Y-m-d') !== $ultimo || $profissionalId <= 0) {
+        radar_redirect_action('erro', 'Preencha nome, WhatsApp, profissional e último atendimento.');
+    }
+
+    if (!podeEditarProfissional($profissionalId)) {
+        radar_redirect_action('erro', 'Você não tem permissão para esse profissional.');
+    }
+
+    if ($id > 0) {
+        $stmtCheck = $conn->prepare("SELECT profissional_id FROM retorno_manual WHERE id = ? LIMIT 1");
+        $stmtCheck->bind_param('i', $id);
+        $stmtCheck->execute();
+        $current = $stmtCheck->get_result()->fetch_assoc();
+        if (!$current || !podeEditarProfissional((int)$current['profissional_id'])) {
+            radar_redirect_action('erro', 'Você não tem permissão para editar esse lembrete.');
+        }
+
+        $stmt = $conn->prepare("
+            UPDATE retorno_manual
+            SET cliente_nome = ?, cliente_telefone = ?, profissional_id = ?, frequencia_dias = ?, avisar_com_dias = ?, ultimo_atendimento = ?, observacao = ?, status_manual = NULL, adiado_para = NULL
+            WHERE id = ?
+            LIMIT 1
+        ");
+        $stmt->bind_param('ssiiissi', $nome, $phone['display_phone'], $profissionalId, $frequencia, $avisar, $ultimo, $observacao, $id);
+        $stmt->execute();
+        radar_redirect_action('sucesso', 'Lembrete atualizado.');
+    }
+
+    $usuarioId = (int)($_SESSION['usuario_id'] ?? 0);
+    $stmt = $conn->prepare("
+        INSERT INTO retorno_manual
+            (cliente_nome, cliente_telefone, profissional_id, frequencia_dias, avisar_com_dias, ultimo_atendimento, observacao, criado_por)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param('ssiiissi', $nome, $phone['display_phone'], $profissionalId, $frequencia, $avisar, $ultimo, $observacao, $usuarioId);
+    $stmt->execute();
+    radar_redirect_action('sucesso', 'Cliente recorrente cadastrado.');
+}
+
+$id = (int)($_POST['id'] ?? 0);
+$stmt = $conn->prepare("SELECT id, profissional_id FROM retorno_manual WHERE id = ? LIMIT 1");
 $stmt->bind_param('i', $id);
 $stmt->execute();
 $item = $stmt->get_result()->fetch_assoc();
 
 if (!$item || !podeEditarProfissional((int)$item['profissional_id'])) {
-    radar_redirect_action('erro', 'Você não tem permissão para alterar este retorno.');
+    radar_redirect_action('erro', 'Você não tem permissão para alterar esse lembrete.');
 }
 
 if ($action === 'contatado') {
-    $stmtUp = $conn->prepare("UPDATE radar_retornos SET estado_manual = 'contatado', ultimo_contato_em = NOW(), tentativas = tentativas + 1 WHERE id = ? LIMIT 1");
+    $stmtUp = $conn->prepare("UPDATE retorno_manual SET status_manual = 'contatado', ultimo_contato_em = NOW(), adiado_para = NULL WHERE id = ? LIMIT 1");
     $stmtUp->bind_param('i', $id);
     $stmtUp->execute();
     radar_redirect_action('sucesso', 'Contato registrado.');
 }
 
-if ($action === 'aguardando') {
-    $stmtUp = $conn->prepare("UPDATE radar_retornos SET estado_manual = 'aguardando_resposta', ultimo_contato_em = COALESCE(ultimo_contato_em, NOW()) WHERE id = ? LIMIT 1");
-    $stmtUp->bind_param('i', $id);
-    $stmtUp->execute();
-    radar_redirect_action('sucesso', 'Cliente marcado como aguardando resposta.');
-}
-
 if ($action === 'lembrar') {
     $days = max(1, min(30, (int)($_POST['dias'] ?? 1)));
     $date = date('Y-m-d', strtotime('+' . $days . ' days'));
-    $stmtUp = $conn->prepare("UPDATE radar_retornos SET estado_manual = 'adiado', adiado_para = ? WHERE id = ? LIMIT 1");
+    $stmtUp = $conn->prepare("UPDATE retorno_manual SET status_manual = 'adiado', adiado_para = ? WHERE id = ? LIMIT 1");
     $stmtUp->bind_param('si', $date, $id);
     $stmtUp->execute();
     radar_redirect_action('sucesso', 'Lembrete adiado.');
 }
 
-if ($action === 'escolher_data') {
-    $date = trim($_POST['data'] ?? '');
-    $valid = DateTime::createFromFormat('Y-m-d', $date);
-    if (!$valid || $valid->format('Y-m-d') !== $date) {
-        radar_redirect_action('erro', 'Escolha uma data válida.');
-    }
-    $stmtUp = $conn->prepare("UPDATE radar_retornos SET estado_manual = 'adiado', adiado_para = ? WHERE id = ? LIMIT 1");
-    $stmtUp->bind_param('si', $date, $id);
-    $stmtUp->execute();
-    radar_redirect_action('sucesso', 'Retorno reagendado no Radar.');
-}
-
-if ($action === 'ignorar') {
-    $date = date('Y-m-d', strtotime('+45 days'));
-    $stmtUp = $conn->prepare("UPDATE radar_retornos SET estado_manual = 'ignorado', ignorado_ate = ? WHERE id = ? LIMIT 1");
-    $stmtUp->bind_param('si', $date, $id);
-    $stmtUp->execute();
-    radar_redirect_action('sucesso', 'Cliente ignorado neste ciclo.');
-}
-
 if ($action === 'desativar') {
-    $stmtUp = $conn->prepare("UPDATE radar_retornos SET estado_manual = 'desativado', lembretes_ativos = 0 WHERE id = ? LIMIT 1");
+    $stmtUp = $conn->prepare("UPDATE retorno_manual SET ativo = 0 WHERE id = ? LIMIT 1");
     $stmtUp->bind_param('i', $id);
     $stmtUp->execute();
-    radar_redirect_action('sucesso', 'Lembretes desativados para este cliente.');
+    radar_redirect_action('sucesso', 'Lembrete desativado.');
 }
 
 radar_redirect_action('erro', 'Ação inválida.');
