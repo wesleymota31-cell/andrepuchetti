@@ -133,6 +133,42 @@ function findFirstExistingColumn(array $columns, array $candidates): ?string
     return null;
 }
 
+function encontrarBloqueioSobreposto(mysqli $conn, int $profissionalId, string $data, string $horaInicio, string $horaFim): ?array
+{
+    $stmtPontual = $conn->prepare("
+        SELECT id, 'pontual' AS tipo_origem
+        FROM bloqueios
+        WHERE profissional_id = ?
+          AND data = ?
+          AND hora_inicio < ?
+          AND hora_fim > ?
+        LIMIT 1
+    ");
+    $stmtPontual->bind_param('isss', $profissionalId, $data, $horaFim, $horaInicio);
+    $stmtPontual->execute();
+    $pontual = $stmtPontual->get_result()->fetch_assoc();
+    if ($pontual) {
+        return $pontual;
+    }
+
+    $diaSemanaBanco = (string)date('N', strtotime($data));
+    $stmtRecorrente = $conn->prepare("
+        SELECT id, 'recorrente' AS tipo_origem
+        FROM bloqueios_recorrentes
+        WHERE profissional_id = ?
+          AND ativo = 1
+          AND data_inicio <= ?
+          AND (data_fim IS NULL OR data_fim >= ?)
+          AND FIND_IN_SET(?, dias_semana)
+          AND hora_inicio < ?
+          AND hora_fim > ?
+        LIMIT 1
+    ");
+    $stmtRecorrente->bind_param('isssss', $profissionalId, $data, $data, $diaSemanaBanco, $horaFim, $horaInicio);
+    $stmtRecorrente->execute();
+    return $stmtRecorrente->get_result()->fetch_assoc() ?: null;
+}
+
 
 function getVisibleBlockSegments(array $bloqueio, array $agendamentosDoProfissional): array
 {
@@ -463,42 +499,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'agendam
      * BLOQUEIOS (com exceção para profissional/admin quando permitido)
      * =========================
      */
-    $bloqueiosColumnsAgenda = getTableColumns($conn, 'bloqueios');
-    $colunaPermiteProfissionalAgenda = findFirstExistingColumn($bloqueiosColumnsAgenda, [
-        'permite_profissional',
-        'allow_professional_booking',
-        'permite_agendamento_profissional',
-        'libera_profissional',
-        'somente_profissional'
-    ]);
-
-    $sqlBloqueio = "
-        SELECT id,
-               " . ($colunaPermiteProfissionalAgenda ? "`{$colunaPermiteProfissionalAgenda}`" : "0") . " AS permite_profissional
-        FROM bloqueios
-        WHERE profissional_id = ?
-          AND data = ?
-          AND hora_inicio < ?
-          AND hora_fim > ?
-        LIMIT 1
-    ";
-
-    $stmtBloqueio = $conn->prepare($sqlBloqueio);
-    $stmtBloqueio->bind_param('isss', $profissionalId, $dataPost, $horaFimBanco, $horaInicioBanco);
-    $stmtBloqueio->execute();
-    $bloqueio = $stmtBloqueio->get_result()->fetch_assoc();
+    $bloqueio = encontrarBloqueioSobreposto($conn, $profissionalId, $dataPost, $horaInicioBanco, $horaFimBanco);
 
     /**
-     * REGRA INTERNA DA AGENDA VISUAL:
-     * Profissional/assistente/admin podem criar agendamento em cima de bloqueio.
-     * O bloqueio continua existindo; o agendamento entra como exceção operacional.
-     *
-     * Importante: a permissão do usuário já foi validada acima com podeEditarProfissional().
-     * Portanto, neste fluxo interno NÃO bloqueamos o salvamento por causa da tabela bloqueios.
-     * A trava para cliente público deve ficar somente no index.php / fluxo público.
+     * Por padrão a agenda interna respeita bloqueios pontuais e recorrentes.
+     * A exceção só passa quando o usuário clica explicitamente em "Agendar exceção"
+     * dentro do card do bloqueio.
      */
     $isOverrideBloqueio = $overrideBloqueioPost === 1;
     $agendamentoSobreBloqueio = $bloqueio ? 1 : 0;
+    if ($bloqueio && !$isOverrideBloqueio) {
+        redirectAgendaVisual($returnData, $returnProfissionalId, 'erro', 'Este horário está bloqueado. Para salvar mesmo assim, abra o bloqueio e use Agendar exceção.');
+    }
 
     /**
      * =========================
